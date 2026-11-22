@@ -1,0 +1,1638 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#171916" />
+    <title>Programátoři - Od prvních programů k umělé inteligenci</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap");
+      :root {
+        color-scheme: dark;
+        --ink: #171916;
+        --panel: #20231f;
+        --paper: #eee9dc;
+        --muted: #a5a69b;
+        --line: #3a3e37;
+        --acid: #d6f36a;
+        --rust: #d97754;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "DM Sans", sans-serif;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 36px 20px;
+        overflow-x: hidden;
+      }
+      body:before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.12;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+      }
+      .shell {
+        width: min(100%, 1030px);
+        position: relative;
+      }
+      .masthead {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 4px 17px;
+        font:
+          11px "DM Mono",
+          monospace;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand-mark {
+        width: 9px;
+        height: 9px;
+        background: var(--acid);
+        border-radius: 50%;
+        box-shadow: 0 0 14px #d6f36a55;
+      }
+      .issue {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .issue:before {
+        content: "";
+        height: 1px;
+        width: 38px;
+        background: var(--line);
+      }
+      .card {
+        background: var(--paper);
+        color: #20221d;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 30px 90px #0008;
+        display: grid;
+        grid-template-columns: 43% 57%;
+        min-height: 585px;
+        position: relative;
+      }
+      .portrait {
+        background: #c9c5b7;
+        position: relative;
+        overflow: hidden;
+        min-height: 585px;
+        color: #23251f;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 24px;
+      }
+      .portrait:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          145deg,
+          #d8d2c1 0%,
+          #a9a99c 60%,
+          #73786e 100%
+        );
+      }
+      .portrait:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.15;
+        background-image: radial-gradient(#222 0.6px, transparent 0.6px);
+        background-size: 5px 5px;
+        mix-blend-mode: multiply;
+      }
+      .matrix {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.55;
+        mix-blend-mode: multiply;
+      }
+      .portrait-top,
+      .portrait-bottom {
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font:
+          10px "DM Mono",
+          monospace;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .portrait-top span:last-child {
+        background: #20221d;
+        color: var(--paper);
+        padding: 8px 10px;
+        border-radius: 2px;
+      }
+      .figure {
+        position: absolute;
+        inset: 90px 0 65px;
+        display: grid;
+        place-items: center;
+      }
+      .figure img {
+        width: 100%;
+        height: 100%;
+        max-height: 450px;
+        object-fit: contain;
+        position: absolute;
+        z-index: 1;
+        filter: drop-shadow(0 14px 15px #20221d22);
+      }
+      .portrait-word {
+        position: absolute;
+        z-index: 1;
+        top: 42%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font:
+          700 clamp(100px, 18vw, 205px)/0.8 "Playfair Display",
+          serif;
+        letter-spacing: -0.1em;
+        color: #f1ecde55;
+        white-space: nowrap;
+        user-select: none;
+      }
+      .portrait-bottom {
+        width: calc(100% - 48px);
+        position: absolute;
+        bottom: 25px;
+        left: 24px;
+      }
+      .portrait-bottom .rec {
+        display: flex;
+        gap: 7px;
+        align-items: center;
+      }
+      .rec i {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #c0503c;
+        display: block;
+        box-shadow: 0 0 8px #c0503c;
+      }
+      .details {
+        padding: 39px clamp(25px, 5vw, 57px) 32px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .eyebrow {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        color: #74766b;
+        font:
+          10px "DM Mono",
+          monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      .eyebrow:before {
+        content: "";
+        width: 23px;
+        height: 1px;
+        background: var(--rust);
+      }
+      h1 {
+        font:
+          600 clamp(42px, 6vw, 68px)/0.98 "Playfair Display",
+          serif;
+        letter-spacing: -0.045em;
+        margin: 22px 0 10px;
+      }
+      .subtitle {
+        font-size: 15px;
+        color: #64665e;
+        margin: 0;
+      }
+      .tags {
+        display: flex;
+      }
+      .tag {
+        border: 1px solid #c5c4b8;
+        border-radius: 10px;
+        padding: 2px 8px;
+        margin-right: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font:
+          9px "DM Mono",
+          monospace;
+        color: #62645b;
+      }
+      .tag.accent {
+        background: #242720;
+        color: var(--acid);
+        border-color: #242720;
+      }
+      .rule {
+        height: 1px;
+        background: #cfcec2;
+      }
+      .facts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 23px 20px;
+        padding: 24px 0;
+      }
+      .fact-label {
+        color: #85867b;
+        font:
+          9px "DM Mono",
+          monospace;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+      }
+      .fact-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: #292b25;
+      }
+      .fact-value small {
+        font-size: 11px;
+        font-weight: 400;
+        color: #77796e;
+      }
+      .bio {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 0 18px;
+      }
+      .bio-label {
+        font:
+          9px "DM Mono",
+          monospace;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #85867b;
+        margin-bottom: 7px;
+      }
+      .bio-text {
+        font:
+          17px "Playfair Display",
+          serif;
+      }
+      .location-link {
+        color: #35372f;
+        font:
+          10px "DM Mono",
+          monospace;
+        text-decoration: none;
+        border-bottom: 1px solid #a9aa9f;
+        padding-bottom: 4px;
+        white-space: nowrap;
+      }
+      .location-link:hover {
+        color: #8d513a;
+        border-color: #8d513a;
+      }
+      .bottom {
+        margin-top: auto;
+        padding-top: 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+      .source {
+        font:
+          9px "DM Mono",
+          monospace;
+        color: #85867b;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .source span {
+        color: #33352e;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+      .action {
+        border: 1px solid #bfc0b4;
+        background: transparent;
+        color: #34362f;
+        padding: 10px 12px;
+        border-radius: 2px;
+        font:
+          10px "DM Mono",
+          monospace;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 0.18s;
+      }
+      .action:hover {
+        background: #242720;
+        color: var(--paper);
+        border-color: #242720;
+      }
+      .action.primary {
+        background: #242720;
+        color: var(--acid);
+        border-color: #242720;
+      }
+      .action.primary:hover {
+        background: #383d31;
+      }
+      .expanded {
+        display: none;
+        padding: 18px 0 0;
+        border-top: 1px solid #cfcec2;
+        animation: fade 0.22s ease;
+      }
+      .expanded.open {
+        display: block;
+      }
+      .expanded h2 {
+        font:
+          500 19px "Playfair Display",
+          serif;
+        margin: 0 0 8px;
+      }
+      .expanded p {
+        font-size: 12px;
+        line-height: 1.6;
+        color: #66685f;
+        margin: 0;
+      }
+      .expanded .identifier {
+        font:
+          10px "DM Mono",
+          monospace;
+        color: #4d5048;
+        margin-top: 11px;
+      }
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translate(-50%, 12px);
+        background: var(--acid);
+        color: #20221d;
+        padding: 10px 15px;
+        border-radius: 3px;
+        font:
+          11px "DM Mono",
+          monospace;
+        opacity: 0;
+        transition: 0.22s;
+        pointer-events: none;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media (max-width: 700px) {
+        body {
+          padding: 20px 14px;
+        }
+        .masthead {
+          font-size: 9px;
+        }
+        .card {
+          grid-template-columns: 1fr;
+        }
+        .figure {
+          inset: 48px 0 40px;
+        }
+        .portrait-word {
+          font-size: 140px;
+        }
+        .details {
+          padding: 30px 25px 25px;
+        }
+        .bottom {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .actions {
+          width: 100%;
+        }
+        .action {
+          flex: 1;
+          text-align: center;
+        }
+      }
+      @media (max-width: 390px) {
+        .facts {
+          gap: 18px 10px;
+        }
+        .issue:before {
+          width: 15px;
+        }
+        .issue {
+          gap: 6px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *:before,
+        *:after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid #cfcec2;
+      }
+      .tab {
+        appearance: none;
+        background: transparent;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        padding: 10px 14px;
+        cursor: pointer;
+        color: #85867b;
+        font:
+          10px "DM Mono",
+          monospace;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        transition:
+          color 0.18s,
+          border-color 0.18s;
+      }
+      .tab:hover {
+        color: #34362f;
+      }
+      .tab[aria-selected="true"] {
+        color: #20221d;
+        border-bottom-color: var(--rust);
+      }
+      .tab:focus-visible {
+        outline: 2px solid var(--rust);
+        outline-offset: 2px;
+      }
+      .tab-panel {
+        animation: fade 0.22s ease;
+      }
+      .tab-panel[hidden] {
+        display: none;
+      }
+      .fact.wide {
+        grid-column: 1 / -1;
+      }
+      .fact-value a {
+        color: #35372f;
+        text-decoration: none;
+        border-bottom: 1px solid #a9aa9f;
+        word-break: break-all;
+      }
+      .fact-value a:hover {
+        color: #8d513a;
+        border-color: #8d513a;
+      }
+      .fact-value ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 6px;
+      }
+      .search {
+        position: relative;
+        margin: 0 0 16px;
+      }
+      .search-input {
+        width: 100%;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        color: var(--paper);
+        padding: 13px 14px 13px 40px;
+        font:
+          14px "DM Sans",
+          sans-serif;
+        outline: none;
+        transition: border-color 0.18s;
+      }
+      .search-input::placeholder {
+        color: var(--muted);
+      }
+      .search-input:focus {
+        border-color: var(--acid);
+      }
+      .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        color: var(--muted);
+        pointer-events: none;
+      }
+      .search-results {
+        position: absolute;
+        z-index: 10;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        margin: 0;
+        padding: 6px;
+        list-style: none;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        box-shadow: 0 20px 50px #0009;
+        max-height: 360px;
+        overflow-y: auto;
+      }
+      .search-results[hidden] {
+        display: none;
+      }
+      .search-result {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 2px;
+        cursor: pointer;
+      }
+      .search-result[aria-selected="true"] {
+        background: #2f332c;
+      }
+      .search-result .r-name {
+        font-weight: 600;
+      }
+      .search-result .r-name mark {
+        background: none;
+        color: var(--acid);
+      }
+      .search-result .r-meta {
+        color: var(--muted);
+        font:
+          10px "DM Mono",
+          monospace;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-align: right;
+      }
+      .search-result.none {
+        color: var(--muted);
+        cursor: default;
+      }
+      .empty {
+        grid-column: 1 / -1;
+        color: #85867b;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell" aria-label="Actor profile">
+      <div class="search">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" />
+        </svg>
+        <input
+          class="search-input"
+          id="search"
+          type="search"
+          placeholder="Hledat osobu (jméno, povolání, místo…)"
+          autocomplete="off"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-controls="search-results"
+          aria-label="Hledat osobu"
+        />
+        <ul class="search-results" id="search-results" role="listbox" hidden></ul>
+      </div>
+      <article class="card">
+        <section
+          class="portrait"
+          aria-label="Portrait"
+        >
+          <canvas class="matrix" aria-hidden="true"></canvas>
+          <div class="figure" aria-hidden="true">
+            <svg
+              viewBox="0 0 420 500"
+              role="img"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="coat" x1="0" x2="1" y1="0" y2="1">
+                  <stop stop-color="#45483e" />
+                  <stop offset="1" stop-color="#252820" />
+                </linearGradient>
+                <linearGradient id="face" x1="0" x2="1">
+                  <stop stop-color="#c6a98d" />
+                  <stop offset="1" stop-color="#937661" />
+                </linearGradient>
+              </defs>
+              <ellipse
+                cx="213"
+                cy="455"
+                rx="144"
+                ry="22"
+                fill="#20221d"
+                opacity=".16"
+              />
+              <path
+                d="M72 462c5-97 39-147 104-166l39 17 42-19c66 16 95 77 99 168H72z"
+                fill="url(#coat)"
+              />
+              <path
+                d="M170 293l44 39 42-42 16 16-28 93h-62l-31-91z"
+                fill="#ede6d6"
+              />
+              <path d="M185 317l29 22 29-22 16 83h-92z" fill="#31342c" />
+              <path
+                d="M164 139c0-62 22-99 61-99 47 0 72 39 69 103l-7 69c-5 42-33 69-66 69-35 0-62-29-65-71z"
+                fill="url(#face)"
+              />
+              <path
+                d="M157 160c-14-72 4-127 48-145 39-16 89 0 104 44 7 22 4 52-1 71-11-22-30-36-54-43-21 18-48 27-85 28l-8 57-4-1z"
+                fill="#35372f"
+              />
+              <path
+                d="M164 134c-15-10-26 1-22 25 3 19 13 29 23 27m127-54c14-10 24 1 20 24-3 18-12 28-21 27"
+                fill="#aa8b72"
+              />
+              <path
+                d="M175 163q18-12 34 0m39 0q18-12 34 0"
+                fill="none"
+                stroke="#493b32"
+                stroke-width="5"
+                stroke-linecap="round"
+              />
+              <path
+                d="M185 183h20m44 0h20"
+                stroke="#28251f"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+              <path
+                d="M229 178l-7 38 13 2"
+                fill="none"
+                stroke="#826953"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
+              <path
+                d="M198 237q19 11 40-1"
+                fill="none"
+                stroke="#684e42"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+              <path
+                d="M169 256q43 39 92-2l-8 28-45 32-41-32z"
+                fill="#8c705b"
+                opacity=".82"
+              />
+              <path
+                d="M105 366l78 26-11 77H85zm213 0l-77 26 12 77h87z"
+                fill="#383b33"
+              />
+              <path d="M205 339l10 20 10-20 15 123h-48z" fill="#c8c1b2" />
+            </svg>
+          </div>
+        </section>
+        <section class="details">
+          <!-- Tags -->
+          <div>
+            <h2 id="name" style="margin: 10px 0px"></h2>
+            <div class="tags" id="tags" style="margin: 10px 0px"></div>
+          </div>
+          
+          <!-- Tabs start -->
+          <div class="tabs" role="tablist" aria-label="Profil">
+            <button class="tab" type="button" role="tab" id="tab-general" aria-controls="panel-general" aria-selected="true">Bio</button>
+            <button class="tab" type="button" role="tab" id="tab-detail" aria-controls="panel-detail" aria-selected="false" tabindex="-1">Detail</button>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-general" aria-labelledby="tab-general">
+            <div class="facts" id="facts-general"></div>
+          </div>
+          <div class="tab-panel" role="tabpanel" id="panel-detail" aria-labelledby="tab-detail" hidden>
+            <div class="facts" id="facts-detail"></div>
+          </div>
+          <!-- Tabs end -->
+        </section>
+      </article>
+    </main>
+    <script>
+      // Static data — key is the person's slug, used in index.html?person=<slug>
+      const PEOPLE = {
+        "people/programmers/ada-lovelace": {
+          "id": "e82d55d9-0a07-4a06-a04a-e35bf5d59a32",
+          "name": {
+            "display": "Ada Lovelace",
+            "first": "Ada",
+            "middle": "",
+            "last": "Lovelace",
+            "suffix": "",
+            "prefix": ""
+          },
+          "bio": "Ada Lovelace, vlastním jménem Augusta Ada King, byla anglická matematička a spisovatelka. Narodila se roku 1815 v Londýně jako dcera básníka George Gordona Byrona. V době, kdy ženy měly jen omezený přístup k vědeckému vzdělání, se věnovala matematice a přírodním vědám. <br><br> V 19. století spolupracovala s matematikem a vynálezcem Charlesem Babbagem na návrhu jeho Analytického stroje, mechanického počítacího zařízení. Roku 1843 přeložila text o stroji a doplnila jej vlastními rozsáhlými poznámkami. Popsala v nich postup pro výpočet Bernoulliho čísel, který bývá označován za první zveřejněný počítačový program. <br><br>Lovelace předpokládala, že stroj může zpracovávat i symboly a hudbu, pokud je lze vyjádřit pravidly. Za jejího života stroj nevznikl, její představa jeho možností však předběhla dobu.",
+          "nicknames": [
+            "Augusta Ada King"
+          ],
+          "dateOfBirth": "1815-12-10",
+          "dateOfDeath": "1852-11-27",
+          "mattersOfDeath": "Rakovina děložní",
+          "placeOfBirth": {
+            "city": "Londýn",
+            "state": "",
+            "country": "Spojené království",
+            "postalCode": "",
+            "gps": {
+              "lat": 51.5074,
+              "lon": -0.1278
+            }
+          },
+          "placeOfDeath": {
+            "city": "Londýn",
+            "state": "",
+            "country": "Spojené království",
+            "postalCode": "",
+            "gps": {
+              "lat": 51.5074,
+              "lon": -0.1278
+            }
+          },
+          "occupations": [
+            "matematička",
+            "programátorka"
+          ],
+          "nationalities": [
+            "Britská"
+          ],
+          "languages": [
+            "Angličtina",
+            "Francouzština"
+          ],
+          "images": {
+            "main": "images/ada-lovelace.webp",
+            "other": []
+          },
+          "identifiers": [],
+          "links": [
+            {
+              "url": "https://en.wikipedia.org/wiki/Ada_Lovelace",
+              "title": "Wikipedia"
+            }
+          ],
+          "sources": []
+        },
+        "people/programmers/dennis-ritchie": {
+          "id": "uuid",
+          "name": {
+            "display": "Dennis Ritchie",
+            "first": "Dennis",
+            "last": "Ritchie",
+            "middle": "MacAlistair",
+            "nicknames": []
+          },
+          "bio": "Dennis Ritchie byl americký informatik a programátor. Narodil se roku 1941 v Bronxu ve státě New York. Většinu kariéry strávil v Bellových laboratořích, kde se věnoval vývoji operačních systémů a programovacích jazyků. <br><br>V sedmdesátých letech vytvořil programovací jazyk C a společně s Kenem Thompsonem vyvinul operační systém Unix. Jazyk C usnadnil přenášení Unixu mezi různými počítači a stal se jedním z nejvlivnějších nástrojů v historii programování. Spolu s Brianem Kernighanem vydal knihu The C Programming Language, která se stala důležitou příručkou pro programátory. <br><br>Za svůj přínos informatice získal v roce 1983 Turingovu cenu společně s Thompsonem. Jeho práce ovlivnila vývoj mnoha operačních systémů a programovacích jazyků, jejichž principy se používají dodnes.",
+          "dateOfBirth": "1941-09-09",
+          "placeOfBirth": {
+            "city": "Bronxville",
+            "state": "New York",
+            "country": "USA",
+            "postalCode": "10708",
+            "gps": {
+              "lat": "40.9433",
+              "lon": "-73.8294"
+            }
+          },
+          "dateOfDeath": "2011-10-12",
+          "placeOfDeath": {
+            "city": "Berkeley",
+            "state": "California",
+            "country": "USA",
+            "postalCode": "94720",
+            "gps": {
+              "lat": "37.8715",
+              "lon": "-122.2730"
+            }
+          },
+          "occupations": [
+            "informatik",
+            "programátor"
+          ],
+          "nationalities": [
+            "Americký"
+          ],
+          "languages": [
+            "Angličtina"
+          ],
+          "images": {
+            "main": "images/dennis-ritchie.webp",
+            "other": []
+          },
+          "identifiers": [],
+          "links": [],
+          "sources": []
+        },
+        "people/programmers/grace-hopper": {
+          "id": "83004664-2059-48a9-84e4-8e3e538e3e44",
+          "name": {
+            "display": "Grace Hopper",
+            "first": "Grace",
+            "middle": "Brewster Murray",
+            "last": "Hopper",
+            "suffix": "",
+            "prefix": ""
+          },
+          "bio": "Grace Hopper byla americká informatička, matematička a důstojnice námořnictva Spojených států. Narodila se roku 1906 v New Yorku. Vystudovala matematiku a fyziku na Vassar College a doktorát z matematiky získala na Yaleově univerzitě. Během druhé světové války vstoupila do námořnictva a pracovala s počítačem Harvard Mark I.<br><br>Po válce se věnovala vývoji programovacích jazyků. V roce 1952 vytvořila jeden z prvních kompilátorů, program, který převádí instrukce do podoby srozumitelné počítači. Její práce na jazyku FLOW-MATIC ovlivnila vznik COBOLu, který umožnil psát obchodní programy příkazy bližšími angličtině.<br><br>Hopper dlouhodobě prosazovala snadnější a srozumitelnější programování. Pokračovala ve službě u námořnictva až do roku 1986 a odešla v hodnosti kontradmirálky. Její přínos pomohl zpřístupnit programování širšímu okruhu lidí a ovlivnil vývoj moderních jazyků.",
+          "nicknames": [
+            "Amazing Grace"
+          ],
+          "description": "",
+          "dateOfBirth": "1906-12-09",
+          "dateOfDeath": "1992-01-01",
+          "mattersOfDeath": "Přirozená smrt",
+          "placeOfBirth": {
+            "city": "New York",
+            "state": "New York",
+            "country": "USA",
+            "postalCode": "10001",
+            "gps": {
+              "lat": 40.7128,
+              "lon": -74.006
+            }
+          },
+          "placeOfDeath": {
+            "city": "Arlington",
+            "state": "Virginia",
+            "country": "USA",
+            "postalCode": "22201",
+            "gps": {
+              "lat": 38.8816,
+              "lon": -77.091
+            }
+          },
+          "occupations": [
+            "informatička",
+            "programátorka",
+            "důstojnice námořnictva"
+          ],
+          "nationalities": [
+            "Americká"
+          ],
+          "languages": [
+            "Angličtina"
+          ],
+          "images": {
+            "main": "images/grace-hopper.webp",
+            "other": []
+          },
+          "identifiers": [],
+          "links": [
+            {
+              "url": "https://en.wikipedia.org/wiki/Grace_Hopper",
+              "title": "Wikipedia"
+            }
+          ],
+          "sources": []
+        },
+        "people/programmers/guido-van-rossum": {
+          "id": "uuid",
+          "name": {
+            "display": "Guido van Rossum",
+            "first": "Guido",
+            "last": "van Rossum",
+            "middle": "",
+            "nicknames": []
+          },
+          "bio": "Guido van Rossum je nizozemský programátor a tvůrce jazyka Python. Vystudoval matematiku a informatiku na Amsterdamské univerzitě a začal pracovat ve výzkumném centru CWI. Právě tam na konci osmdesátých let vytvořil Python jako vedlejší projekt, inspirovaný mimo jiné jazykem ABC.<br><br>Python koncipoval jako přehledný jazyk, snadno čitelný pro začátečníky i zkušené programátory. Jeho první veřejná verze vyšla v roce 1991. Van Rossum po mnoho let vedl vývoj jazyka a do roku 2018 byl známý jako jeho „Benevolent Dictator for Life“, tedy hlavní rozhodovací autorita projektu.<br><br>Později pracoval pro Google, Dropbox i Microsoft a v roce 2026 odešel do důchodu. Zůstává aktivní v komunitě Pythonu. Jeho jazyk se dnes používá ve vědě, automatizaci i při vývoji webových aplikací.",
+          "dateOfBirth": "1956-01-31",
+          "placeOfBirth": {
+            "city": "Haarlem",
+            "state": "",
+            "country": "Netherlands",
+            "postalCode": "2012",
+            "gps": {
+              "lat": "52.3874",
+              "lon": "4.6462"
+            }
+          },
+          "dateOfDeath": null,
+          "placeOfDeath": {
+            "city": "",
+            "state": "",
+            "country": "",
+            "postalCode": "",
+            "gps": {
+              "lat": "",
+              "lon": ""
+            }
+          },
+          "occupations": [
+            "programátor"
+          ],
+          "nationalities": [
+            "Nizozemský"
+          ],
+          "languages": [
+            "Nizozemština",
+            "Angličtina"
+          ],
+          "images": {
+            "main": "images/guido-van-rossum.webp",
+            "other": []
+          },
+          "identifiers": [],
+          "links": [],
+          "sources": []
+        },
+        "people/programmers/ken-thompson": {
+          "id": "uuid",
+          "name": {
+            "display": "Ken Thompson",
+            "first": "Ken",
+            "last": "Thompson",
+            "middle": "",
+            "nicknames": []
+          },
+          "bio": "Ken Thompson je americký informatik a programátor, narozený roku 1943 v New Orleans. Vystudoval elektrotechniku a informatiku na Kalifornské univerzitě v Berkeley. Roku 1966 nastoupil do Bellových laboratoří, kde se věnoval výzkumu operačních systémů a programovacích jazyků.<br><br>Na konci šedesátých let vytvořil spolu s Dennisem Ritchiem Unix, operační systém, jehož jednoduchý návrh a nástroje ovlivnily řadu pozdějších systémů. Thompson navrhl také programovací jazyk B, předchůdce jazyka C. Unix a jeho vývoj položily základy mnoha technologií, které se používají dodnes.<br><br>V roce 1983 získal společně s Ritchiem Turingovu cenu za zásadní přínos vývoji operačních systémů a programovacích jazyků. Během kariéry se věnoval také počítačovému šachu a později se podílel na vývoji jazyka Go.",
+          "dateOfBirth": "1943-02-04",
+          "placeOfBirth": {
+            "city": "New Orleans",
+            "state": "Louisiana",
+            "country": "USA",
+            "postalCode": "70115",
+            "gps": {
+              "lat": "29.9511",
+              "lon": "-90.0715"
+            }
+          },
+          "dateOfDeath": null,
+          "placeOfDeath": {
+            "city": "",
+            "state": "",
+            "country": "",
+            "postalCode": "",
+            "gps": {
+              "lat": "",
+              "lon": ""
+            }
+          },
+          "occupations": [
+            "informatik",
+            "programátor"
+          ],
+          "nationalities": [
+            "Americký"
+          ],
+          "languages": [
+            "Angličtina"
+          ],
+          "images": {
+            "main": "images/ken-thompson.webp",
+            "other": []
+          },
+          "identifiers": [],
+          "links": [],
+          "sources": []
+        },
+        "people/programmers/linus-torvalds": {
+          "id": "uuid",
+          "name": {
+            "display": "Linus Torvalds",
+            "first": "Linus",
+            "last": "Torvalds",
+            "middle": "",
+            "nicknames": []
+          },
+          "bio": "Linus Torvalds je finsko-americký programátor, který se narodil roku 1969 v Helsinkách. Během studia informatiky na Helsinské univerzitě začal pracovat na vlastním operačním jádře. V srpnu 1991 oznámil jeho vývoj a otevřel projekt dalším programátorům, kteří jej pomáhali rozvíjet. <br><br> Projekt Linux se postupně stal jedním z nejvýznamnějších open-source projektů. Torvalds dodnes působí jako správce stabilní větve linuxového jádra a podílí se na koordinaci jeho vývoje. Vedle Linuxu vytvořil také Git, nástroj pro správu verzí, který usnadňuje spolupráci na rozsáhlých softwarových projektech. <br><br> Jeho práce ukazuje, jak může otevřená spolupráce lidí z celého světa proměnit osobní programátorský experiment v technologii, na níž dnes spoléhají servery, vývojáři i běžní uživatelé.",
+          "dateOfBirth": "1969-12-28",
+          "placeOfBirth": {
+            "city": "Helsinki",
+            "state": "",
+            "country": "Finland",
+            "postalCode": "00100",
+            "gps": {
+              "lat": "60.1695",
+              "lon": "24.9354"
+            }
+          },
+          "dateOfDeath": null,
+          "placeOfDeath": {
+            "city": "",
+            "state": "",
+            "country": "",
+            "postalCode": "",
+            "gps": {
+              "lat": "",
+              "lon": ""
+            }
+          },
+          "occupations": [
+            "softwarový inženýr",
+            "programátor"
+          ],
+          "nationalities": [
+            "Finský",
+            "Americký"
+          ],
+          "languages": [
+            "Finština",
+            "Angličtina"
+          ],
+          "images": {
+            "main": "images/linus-torvalds.webp",
+            "other": []
+          },
+          "identifiers": [],
+          "links": [],
+          "sources": []
+        },
+        "people/programmers/margaret-hamilton": {
+          "id": "772e8339-f966-45b3-8859-75b8b0b47c1f",
+          "name": {
+            "display": "Margaret Hamilton",
+            "first": "Margaret",
+            "middle": "Heafield",
+            "last": "Hamilton",
+            "suffix": "",
+            "prefix": ""
+          },
+          "bio": "Margaret Hamilton byla americká informatička a softwarová inženýrka, narozená roku 1936 v Paoli v Indianě. Vystudovala matematiku na Earlham College a později nastoupila do laboratoře MIT, která pracovala na navigačním systému Apollo.<br><br>Vedla tým, který vytvářel palubní software pro velitelské a lunární moduly misí Apollo. Její práce zahrnovala návrh programů, které pomáhaly počítači rozpoznat chyby a upřednostnit důležité úkoly. Během přistání Apolla 11 tyto schopnosti pomohly systému pokračovat v činnosti navzdory přetížení.<br><br>Po programu Apollo založila vlastní softwarové společnosti a pomohla prosadit pojem „softwarové inženýrství“. V roce 2016 obdržela Prezidentskou medaili svobody za přínos vědě a technice. Zemřela v roce 2026 ve věku 90 let.",
+          "nicknames": [],
+          "description": "",
+          "dateOfBirth": "1936-08-17",
+          "dateOfDeath": "2026-09-30",
+          "mattersOfDeath": "",
+          "placeOfBirth": {
+            "city": "Paoli",
+            "state": "Indiana",
+            "country": "USA",
+            "postalCode": "47454",
+            "gps": {
+              "lat": 38.5562,
+              "lon": -86.4683
+            }
+          },
+          "placeOfDeath": {
+            "city": "Cambridge",
+            "state": "Massachusetts",
+            "country": "USA",
+            "postalCode": "02139",
+            "gps": {
+              "lat": 42.3736,
+              "lon": -71.1097
+            }
+          },
+          "occupations": [
+            "softwarová inženýrka",
+            "programátorka"
+          ],
+          "nationalities": [
+            "Americká"
+          ],
+          "languages": [
+            "Angličtina"
+          ],
+          "images": {
+            "main": "images/margaret-hamilton.webp",
+            "other": []
+          },
+          "identifiers": [],
+          "links": [
+            {
+              "url": "https://en.wikipedia.org/wiki/Margaret_Hamilton_(software_engineer)",
+              "title": "Wikipedia"
+            }
+          ],
+          "sources": []
+        },
+        "people/programmers/martin-fowler": {
+          "id": "uuid",
+          "name": {
+            "display": "Martin Fowler",
+            "first": "Martin",
+            "last": "Fowler",
+            "middle": "",
+            "nicknames": []
+          },
+          "bio": "Martin Fowler je britský odborník na vývoj softwaru, autor, konzultant a přednášející. Vystudoval elektronické inženýrství a informatiku na University College London. Ve své práci se dlouhodobě zaměřuje na návrh podnikových aplikací, softwarovou architekturu a postupy, které pomáhají týmům vytvářet a udržovat kvalitní kód. <br><br>Fowler je známý především knihou Refactoring, která popisuje, jak zlepšovat vnitřní strukturu kódu bez změny jeho chování. Napsal také UML Distilled a Patterns of Enterprise Application Architecture. Jeho texty a přednášky pomohly zpřístupnit vývojářům důležité myšlenky o návrhových vzorech, agilním vývoji a modernizaci systémů. <br><br>Od roku 2000 působí ve společnosti Thoughtworks, kde sdílí zkušenosti z vývoje softwaru s širší odbornou komunitou. Na svém webu publikuje eseje o architektuře, testování, databázích a způsobech organizace vývojářské práce.",
+          "dateOfBirth": "1963-12-18",
+          "placeOfBirth": {
+            "city": "Walthamstow",
+            "state": "",
+            "country": "United Kingdom",
+            "postalCode": "E17",
+            "gps": {
+              "lat": "51.5833",
+              "lon": "0.0167"
+            }
+          },
+          "dateOfDeath": null,
+          "placeOfDeath": {
+            "city": "",
+            "state": "",
+            "country": "",
+            "postalCode": "",
+            "gps": {
+              "lat": "",
+              "lon": ""
+            }
+          },
+          "occupations": [
+            "softwarový inženýr",
+            "spisovatel"
+          ],
+          "nationalities": [
+            "Britský"
+          ],
+          "languages": [
+            "Angličtina"
+          ],
+          "images": {
+            "main": "images/martin-fowler.webp",
+            "other": []
+          },
+          "identifiers": [],
+          "links": [],
+          "sources": []
+        }
+      };
+
+      const DEFAULT_PERSON = "people/programmers/martin-fowler";
+
+      const PLACEHOLDER_FIGURE = document.querySelector(".figure").innerHTML;
+
+      const esc = (v) =>
+        String(v ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+        );
+
+      const parseDate = (iso) => (iso ? new Date(`${iso}T00:00:00`) : null);
+
+      const formatDate = (iso) => {
+        const d = parseDate(iso);
+        return d ? `${d.getDate()}. ${d.getMonth() + 1}. ${d.getFullYear()}` : "";
+      };
+
+      // Age today, or age at death if dateOfDeath is set
+      const computeAge = (birthIso, deathIso) => {
+        const birth = parseDate(birthIso);
+        if (!birth) return null;
+        const end = parseDate(deathIso) || new Date();
+        let age = end.getFullYear() - birth.getFullYear();
+        if (
+          end.getMonth() < birth.getMonth() ||
+          (end.getMonth() === birth.getMonth() && end.getDate() < birth.getDate())
+        )
+          age--;
+        return age;
+      };
+
+      const formatPlace = (place) =>
+        place
+          ? [place.city, place.state, place.country].filter(Boolean).join(", ")
+          : "";
+
+      const mapLink = (place) => {
+        const { lat, lon } = place?.gps || {};
+        if (lat === "" || lon === "" || lat == null || lon == null) return "";
+        return ` <a class="location-link" target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=${esc(lat)}&amp;mlon=${esc(lon)}#map=12/${esc(lat)}/${esc(lon)}">mapa ↗</a>`;
+      };
+
+      // add wide option for bio
+      const bioHtml = (bio, wide = true) => wide ? `<div class="fact wide">${bio}</div>` : `<div class="bio">${bio}</div>`;
+
+      const fact = (label, html, wide = false) =>
+        html
+          ? `<div class="fact${wide ? " wide" : ""}"><div class="fact-label">${esc(label)}:</div><div class="fact-value">${html}</div></div>`
+          : "";
+
+      const dateHtml = (iso) =>
+        iso ? `<time datetime="${esc(iso)}">${esc(formatDate(iso))}</time>` : "";
+
+      const placeHtml = (place) => {
+        const text = formatPlace(place);
+        return text ? esc(text) + mapLink(place) : "";
+      };
+
+      const list = (arr) => esc((arr || []).filter(Boolean).join(", "));
+
+      function render(person) {
+        const n = person.name || {};
+        const displayName =
+          n.display ||
+          [n.prefix, n.first, n.middle, n.last, n.suffix].filter(Boolean).join(" ");
+        const age = computeAge(person.dateOfBirth, person.dateOfDeath);
+
+        document.title = `${displayName} — Screen Archive`;
+        document
+          .querySelector(".portrait")
+          .setAttribute("aria-label", `Portrait of ${displayName}`);
+
+        // Use the main image instead of the placeholder SVG when one is set
+        // (restores the placeholder when switching to a person without an image)
+        const mainImage = person.images?.main || person.images?.profile;
+        document.querySelector(".figure").innerHTML = mainImage
+          ? `<img src="${esc(mainImage)}" alt="${esc(displayName)}">`
+          : PLACEHOLDER_FIGURE;
+
+        document.querySelector("#tags").innerHTML = (person.occupations || [])
+          .map((o, i) => `<span class="tag${i === 0 ? " accent" : ""}">${esc(o)}</span>`)
+          .join("");
+
+        document.querySelector("#name").textContent =
+          age !== null ? `${displayName} (${age})` : displayName;
+
+        // Tab 1: Bio
+        fillPanel("#facts-general", [
+          bioHtml(person.bio),
+        ]);
+
+        const placeOfBirth = person.placeOfBirth || {};
+        const placeOfDeath = person.placeOfDeath || {};
+
+        // placeOfBirth and placeOfDeath are now handled with fullAddress property - create address from placeOfBirth and placeOfDeath objects if needed
+        if (placeOfBirth && !placeOfBirth.fullAddress) {
+          placeOfBirth.fullAddress = `${placeOfBirth.city || ""}${placeOfBirth.state ? ", " + placeOfBirth.state : ""}${placeOfBirth.country ? ", " + placeOfBirth.country : ""}${placeOfBirth.postalCode ? " " + placeOfBirth.postalCode : ""}`;
+        }
+        if (placeOfDeath && !placeOfDeath.fullAddress) {
+          placeOfDeath.fullAddress = `${placeOfDeath.city || ""}${placeOfDeath.state ? ", " + placeOfDeath.state : ""}${placeOfDeath.country ? ", " + placeOfDeath.country : ""}${placeOfDeath.postalCode ? " " + placeOfDeath.postalCode : ""}`;
+        }
+        
+
+        // Tab 2: Detail
+        const fullName = [n.prefix, n.first, n.middle, n.last, n.suffix]
+          .filter(Boolean)
+          .join(" ");
+
+          // add full name only if it is different from the display name
+          // create address from placeOfBirth object
+
+        // if dateofDeath is not set set wide fo dateOfBirth as true
+
+        const dateOfBirthWide = person.dateOfDeath ? false : true;
+
+        fillPanel("#facts-detail", [
+          ...(fullName !== displayName ? [
+          fact("Celé jméno", esc(fullName),true)] : []),
+          fact("Přezdívky", list(person.nicknames || n.nicknames), true),
+          fact("Národnost", list(person.nationalities)),
+          fact("Jazyky", list(person.languages)),
+          fact("Datum narození", dateHtml(person.dateOfBirth), dateOfBirthWide),
+          fact("Datum úmrtí", dateHtml(person.dateOfDeath)),
+          fact("Pohlaví", esc(person.gender || n.gender)),
+          fact("Místo narození", esc(person.placeOfBirth.fullAddress || ""), dateOfBirthWide),
+          fact("Místo úmrtí", esc(person.placeOfDeath.fullAddress || "")),
+          
+          
+        ]);
+      }
+
+      function fillPanel(selector, items) {
+        const html = items.join("");
+        document.querySelector(selector).innerHTML =
+          html || `<p class="empty">Žádné údaje.</p>`;
+      }
+
+      // identifiers: [{ type: "imdb", id: "nm0000093" }]
+      const identifiersHtml = (ids) =>
+        (ids || [])
+          .filter((i) => i && i.id)
+          .map((i) => `${esc(i.type ? i.type.toUpperCase() + ": " : "")}${esc(i.id)}`)
+          .join("<br>");
+
+      // links/sources: either plain URL strings or { url, title } objects
+      const linksHtml = (items) => {
+        const lis = (items || [])
+          .map((item) => {
+            const url = typeof item === "string" ? item : item?.url;
+            if (!url || !/^https?:\/\//i.test(url)) return "";
+            const label = (typeof item === "object" && (item.title || item.label)) || url;
+            return `<li><a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a></li>`;
+          })
+          .join("");
+        return lis ? `<ul>${lis}</ul>` : "";
+      };
+
+      // Tabs: click + keyboard (←/→, Home/End)
+      const tabs = [...document.querySelectorAll('[role="tab"]')];
+      function selectTab(tab, focus = false) {
+        tabs.forEach((t) => {
+          const active = t === tab;
+          t.setAttribute("aria-selected", String(active));
+          t.tabIndex = active ? 0 : -1;
+          document.getElementById(t.getAttribute("aria-controls")).hidden = !active;
+        });
+        if (focus) tab.focus();
+        try {
+          localStorage.setItem("activeTab", tab.id);
+        } catch {}
+      }
+      tabs.forEach((tab, i) => {
+        tab.addEventListener("click", () => selectTab(tab));
+        tab.addEventListener("keydown", (e) => {
+          const next = {
+            ArrowRight: tabs[(i + 1) % tabs.length],
+            ArrowLeft: tabs[(i - 1 + tabs.length) % tabs.length],
+            Home: tabs[0],
+            End: tabs[tabs.length - 1],
+          }[e.key];
+          if (next) {
+            e.preventDefault();
+            selectTab(next, true);
+          }
+        });
+      });
+      try {
+        const saved = document.getElementById(localStorage.getItem("activeTab"));
+        if (saved && tabs.includes(saved)) selectTab(saved);
+      } catch {}
+
+      // ---------- Loading ----------
+      const currentPath = () => {
+        const p = new URLSearchParams(location.search).get("person");
+        return PEOPLE[p] ? p : DEFAULT_PERSON;
+      };
+
+      function showPerson(path, push = false) {
+        render(PEOPLE[path] || PEOPLE[DEFAULT_PERSON]);
+        // pushState is not allowed on some file:// setups — ignore if it fails
+        if (push) try { history.pushState({ person: path }, "", `?person=${path}`); } catch {}
+      }
+
+      window.addEventListener("popstate", () => showPerson(currentPath()));
+      showPerson(currentPath());
+
+      // ---------- Fulltext search ----------
+      // Lowercase + strip diacritics, so "curie" matches "Curie" and "cesk" matches "Česká"
+      const norm = (s) =>
+        String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+      // Collect every string/number value in the person (names, places, occupations, bio…)
+      const collectText = (v, out = []) => {
+        if (v == null) return out;
+        if (typeof v === "string" || typeof v === "number") out.push(String(v));
+        else if (Array.isArray(v)) v.forEach((x) => collectText(x, out));
+        else if (typeof v === "object")
+          Object.entries(v).forEach(([k, x]) => k !== "id" && collectText(x, out));
+        return out;
+      };
+
+      const displayNameOf = (p) => {
+        const n = p.name || {};
+        return n.display || [n.first, n.middle, n.last].filter(Boolean).join(" ");
+      };
+
+      // [{ path, name, category, occupation, haystack }]
+      const index = Object.entries(PEOPLE)
+        .map(([path, p]) => ({
+          path,
+          name: displayNameOf(p),
+          category: path.split("/")[1] || "",
+          occupation: (p.occupations || [])[0] || "",
+          haystack: norm([path, ...collectText(p)].join(" ")),
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name, "cs"));
+
+      const searchInput = document.querySelector("#search");
+      const resultsEl = document.querySelector("#search-results");
+      let matches = [];
+      let active = -1;
+
+      // Every word of the query must appear somewhere; name matches rank first
+      function search(query) {
+        const terms = norm(query).split(/\s+/).filter(Boolean);
+        if (!terms.length) return index;
+        return index
+          .filter((e) => terms.every((t) => e.haystack.includes(t)))
+          .map((e) => ({ e, score: terms.filter((t) => norm(e.name).includes(t)).length }))
+          .sort((a, b) => b.score - a.score)
+          .map((x) => x.e);
+      }
+
+      // Highlight query terms in the name (diacritics-insensitive)
+      function highlight(name, query) {
+        const terms = norm(query).split(/\s+/).filter(Boolean);
+        const n = norm(name);
+        const marks = new Array(name.length).fill(false);
+        terms.forEach((t) => {
+          for (let i = n.indexOf(t); i !== -1; i = n.indexOf(t, i + 1))
+            for (let j = i; j < i + t.length; j++) marks[j] = true;
+        });
+        // norm() keeps string length for Latin letters, so indices line up
+        if (n.length !== name.length) return esc(name);
+        let out = "";
+        for (let i = 0; i < name.length; i++) {
+          const open = marks[i] && !marks[i - 1];
+          const close = marks[i] && !marks[i + 1];
+          out += (open ? "<mark>" : "") + esc(name[i]) + (close ? "</mark>" : "");
+        }
+        return out;
+      }
+
+      function renderResults() {
+        const q = searchInput.value;
+        matches = search(q);
+        active = matches.length ? 0 : -1;
+        resultsEl.innerHTML = matches.length
+          ? matches
+              .map(
+                (m, i) =>
+                  `<li class="search-result" role="option" id="opt-${i}" data-i="${i}" aria-selected="${i === active}">
+                    <span class="r-name">${highlight(m.name, q)}</span>
+                    <span class="r-meta">${esc([m.occupation, m.category].filter(Boolean).join(" · "))}</span>
+                  </li>`,
+              )
+              .join("")
+          : `<li class="search-result none">Nic nenalezeno.</li>`;
+        openResults(true);
+      }
+
+      function openResults(open) {
+        resultsEl.hidden = !open;
+        searchInput.setAttribute("aria-expanded", String(open));
+        searchInput.setAttribute("aria-activedescendant", open && active >= 0 ? `opt-${active}` : "");
+      }
+
+      function setActive(i) {
+        if (!matches.length) return;
+        active = (i + matches.length) % matches.length;
+        resultsEl.querySelectorAll(".search-result").forEach((el, j) =>
+          el.setAttribute("aria-selected", String(j === active)),
+        );
+        const el = document.getElementById(`opt-${active}`);
+        el?.scrollIntoView({ block: "nearest" });
+        searchInput.setAttribute("aria-activedescendant", `opt-${active}`);
+      }
+
+      function choose(i) {
+        const m = matches[i];
+        if (!m) return;
+        searchInput.value = m.name;
+        openResults(false);
+        showPerson(m.path, true);
+        searchInput.blur();
+      }
+
+      searchInput.addEventListener("input", renderResults);
+      searchInput.addEventListener("focus", renderResults);
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowDown") (e.preventDefault(), resultsEl.hidden ? renderResults() : setActive(active + 1));
+        else if (e.key === "ArrowUp") (e.preventDefault(), setActive(active - 1));
+        else if (e.key === "Enter") (e.preventDefault(), choose(active));
+        else if (e.key === "Escape") openResults(false);
+      });
+      // mousedown (not click) so it fires before the input loses focus
+      resultsEl.addEventListener("mousedown", (e) => {
+        const li = e.target.closest("[data-i]");
+        if (li) (e.preventDefault(), choose(Number(li.dataset.i)));
+      });
+      searchInput.addEventListener("blur", () => openResults(false));
+      // "/" focuses the search from anywhere
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "/" && document.activeElement !== searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+        }
+      });
+    </script>
+    <script>
+      // Matrix rain behind the portrait — upside-down glyphs falling down
+      (() => {
+        const canvas = document.querySelector(".portrait .matrix");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const GLYPHS =
+          "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン0123456789ABCDEFZ<>=+*";
+        const SIZE = 15;
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+        let cols = [], w = 0, h = 0, dpr = 1, last = 0, raf = 0;
+
+        const pick = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
+
+        function resize() {
+          const r = canvas.getBoundingClientRect();
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          w = r.width;
+          h = r.height;
+          canvas.width = Math.round(w * dpr);
+          canvas.height = Math.round(h * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.font = `500 ${SIZE}px "DM Mono", monospace`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const n = Math.ceil(w / SIZE);
+          cols = Array.from({ length: n }, () => ({
+            y: Math.random() * -h,
+            speed: 0.4 + Math.random() * 0.8,
+          }));
+          if (reduced.matches) drawStatic();
+        }
+
+        // Draw a glyph rotated 180° (upside down) at x,y
+        function glyph(ch, x, y) {
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate(Math.PI);
+          ctx.fillText(ch, 0, 0);
+          ctx.restore();
+        }
+
+        function step() {
+          // fade previous frame toward transparent to leave trails
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.fillStyle = "rgba(0,0,0,0.09)";
+          ctx.fillRect(0, 0, w, h);
+          ctx.globalCompositeOperation = "source-over";
+          cols.forEach((c, i) => {
+            const x = i * SIZE + SIZE / 2;
+            const y = Math.floor(c.y / SIZE) * SIZE;
+            ctx.fillStyle = "#2f8f3a";
+            glyph(pick(), x, y - SIZE);
+            ctx.fillStyle = "#0f5c1e";
+            glyph(pick(), x, y);
+            c.y += SIZE * c.speed;
+            if (c.y > h + SIZE && Math.random() > 0.96) c.y = Math.random() * -80;
+          });
+        }
+
+        function drawStatic() {
+          ctx.clearRect(0, 0, w, h);
+          cols.forEach((_, i) => {
+            const len = 4 + ((Math.random() * 14) | 0);
+            const start = Math.random() * h;
+            for (let k = 0; k < len; k++) {
+              ctx.globalAlpha = (k + 1) / len;
+              ctx.fillStyle = "#2f8f3a";
+              glyph(pick(), i * SIZE + SIZE / 2, start + k * SIZE);
+            }
+          });
+          ctx.globalAlpha = 1;
+        }
+
+        function loop(t) {
+          raf = requestAnimationFrame(loop);
+          if (t - last < 50) return; // ~20 fps for that retro feel
+          last = t;
+          step();
+        }
+
+        function start() {
+          cancelAnimationFrame(raf);
+          if (reduced.matches) drawStatic();
+          else raf = requestAnimationFrame(loop);
+        }
+
+        new ResizeObserver(resize).observe(canvas);
+        reduced.addEventListener("change", start);
+        document.addEventListener("visibilitychange", () =>
+          document.hidden ? cancelAnimationFrame(raf) : start()
+        );
+        resize();
+        start();
+      })();
+    </script>
+  </body>
+</html>
