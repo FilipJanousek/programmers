@@ -454,6 +454,12 @@
           text-align: center;
         }
       }
+      @media (max-width: 767px) {
+        /* iOS Safari zooms the page when focusing inputs with font-size < 16px */
+        .search-input {
+          font-size: 16px;
+        }
+      }
       @media (max-width: 390px) {
         .facts {
           gap: 18px 10px;
