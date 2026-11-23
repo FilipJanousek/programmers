@@ -454,12 +454,6 @@
           text-align: center;
         }
       }
-      @media (max-width: 767px) {
-        /* iOS Safari zooms the page when focusing inputs with font-size < 16px */
-        .search-input {
-          font-size: 16px;
-        }
-      }
       @media (max-width: 390px) {
         .facts {
           gap: 18px 10px;
@@ -556,6 +550,13 @@
           sans-serif;
         outline: none;
         transition: border-color 0.18s;
+      }
+      @media (max-width: 767px) {
+        /* iOS Safari zooms the page when focusing inputs with font-size < 16px.
+           Must come AFTER the base .search-input rule, or it gets overridden. */
+        .search-input {
+          font-size: 16px;
+        }
       }
       .search-input::placeholder {
         color: var(--muted);
@@ -1529,7 +1530,10 @@
       }
 
       searchInput.addEventListener("input", renderResults);
-      searchInput.addEventListener("focus", renderResults);
+      searchInput.addEventListener("focus", () => {
+        searchInput.value = "";
+        renderResults();
+      });
       searchInput.addEventListener("keydown", (e) => {
         if (e.key === "ArrowDown") (e.preventDefault(), resultsEl.hidden ? renderResults() : setActive(active + 1));
         else if (e.key === "ArrowUp") (e.preventDefault(), setActive(active - 1));
