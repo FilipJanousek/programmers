@@ -523,6 +523,9 @@
         border-bottom: 1px solid #a9aa9f;
         word-break: break-all;
       }
+      .fact-value a.map-link {
+        word-break: normal;
+      }
       .fact-value a:hover {
         color: #8d513a;
         border-color: #8d513a;
@@ -1500,10 +1503,13 @@
           ? [place.city, place.state, place.country].filter(Boolean).join(", ")
           : "";
 
-      const mapLink = (place) => {
+      // Map URL for a place: exact pin from GPS if available, otherwise a text search
+      const mapUrl = (place, text) => {
         const { lat, lon } = place?.gps || {};
-        if (lat === "" || lon === "" || lat == null || lon == null) return "";
-        return ` <a class="location-link" target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=${esc(lat)}&amp;mlon=${esc(lon)}#map=12/${esc(lat)}/${esc(lon)}">mapa ↗</a>`;
+        if (lat !== "" && lon !== "" && lat != null && lon != null) {
+          return `https://www.openstreetmap.org/?mlat=${encodeURIComponent(lat)}&mlon=${encodeURIComponent(lon)}#map=12/${encodeURIComponent(lat)}/${encodeURIComponent(lon)}`;
+        }
+        return text ? `https://www.openstreetmap.org/search?query=${encodeURIComponent(text)}` : "";
       };
 
       // add wide option for bio
@@ -1518,8 +1524,12 @@
         iso ? `<time datetime="${esc(iso)}">${esc(formatDate(iso))}</time>` : "";
 
       const placeHtml = (place) => {
-        const text = formatPlace(place);
-        return text ? esc(text) + mapLink(place) : "";
+        const text = place?.fullAddress || formatPlace(place);
+        if (!text) return "";
+        const url = mapUrl(place, text);
+        return url
+          ? `<a class="map-link" href="${esc(url)}" target="_blank" rel="noopener" title="Otevřít v mapě">${esc(text)} ↗</a>`
+          : esc(text);
       };
 
       const list = (arr) => esc((arr || []).filter(Boolean).join(", "));
@@ -1547,8 +1557,9 @@
           .map((o, i) => `<span class="tag${i === 0 ? " accent" : ""}">${esc(o)}</span>`)
           .join("");
 
+        const deathMark = person.dateOfDeath ? "† " : "";
         document.querySelector("#name").textContent =
-          age !== null ? `${displayName} (${age})` : displayName;
+          deathMark + (age !== null ? `${displayName} (${age})` : displayName);
 
         // Tab 1: Bio
         fillPanel("#facts-general", [
@@ -1560,10 +1571,10 @@
 
         // placeOfBirth and placeOfDeath are now handled with fullAddress property - create address from placeOfBirth and placeOfDeath objects if needed
         if (placeOfBirth && !placeOfBirth.fullAddress) {
-          placeOfBirth.fullAddress = `${placeOfBirth.city || ""}${placeOfBirth.state ? ", " + placeOfBirth.state : ""}${placeOfBirth.country ? ", " + placeOfBirth.country : ""}${placeOfBirth.postalCode ? " " + placeOfBirth.postalCode : ""}`;
+          placeOfBirth.fullAddress = [placeOfBirth.city, placeOfBirth.state, placeOfBirth.country, placeOfBirth.postalCode].filter(Boolean).join(", ");
         }
         if (placeOfDeath && !placeOfDeath.fullAddress) {
-          placeOfDeath.fullAddress = `${placeOfDeath.city || ""}${placeOfDeath.state ? ", " + placeOfDeath.state : ""}${placeOfDeath.country ? ", " + placeOfDeath.country : ""}${placeOfDeath.postalCode ? " " + placeOfDeath.postalCode : ""}`;
+          placeOfDeath.fullAddress = [placeOfDeath.city, placeOfDeath.state, placeOfDeath.country, placeOfDeath.postalCode].filter(Boolean).join(", ");
         }
         
 
@@ -1588,8 +1599,8 @@
           fact("Datum narození", dateHtml(person.dateOfBirth), dateOfBirthWide),
           fact("Datum úmrtí", dateHtml(person.dateOfDeath)),
           fact("Pohlaví", esc(person.gender || n.gender)),
-          fact("Místo narození", esc(person.placeOfBirth.fullAddress || ""), dateOfBirthWide),
-          fact("Místo úmrtí", esc(person.placeOfDeath.fullAddress || "")),
+          fact("Místo narození", placeHtml(placeOfBirth), dateOfBirthWide),
+          fact("Místo úmrtí", placeHtml(placeOfDeath)),
           fact("Příčina úmrtí", esc(person.mattersOfDeath || ""), !person.dateOfDeath),
           
           
