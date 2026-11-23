@@ -235,9 +235,14 @@
         display: flex;
       }
       .tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
         border: 1px solid #c5c4b8;
         border-radius: 10px;
-        padding: 2px 8px;
+        /* right padding minus letter-spacing, which adds space after the last letter */
+        padding: 3px calc(8px - 0.1em) 3px 8px;
         margin-right: 8px;
         text-transform: uppercase;
         letter-spacing: 0.1em;
@@ -813,8 +818,7 @@
           "occupations": [
             "matematička",
             "programátorka",
-            "spisovatelka",
-            "překladatelka"
+            "spisovatelka"
           ],
           "nationalities": [
             "Britská"
@@ -928,7 +932,7 @@
           "occupations": [
             "informatička",
             "programátorka",
-            "důstojnice námořnictva"
+            "důstojnice"
           ],
           "nationalities": [
             "Americká"
